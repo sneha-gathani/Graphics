@@ -1,0 +1,179 @@
+**Programming Assignment 5 - Path Tracing, Microfacet Models and Multiple Importance Sampling**
+
+Feedback
+========
+
+This has been the most challenging assignment. Yes, it was very interesting, but honestly, I would not have been able to do the assignment without the help of psuedocodes posted on Piazza. The learning does become alot better when we implement the algorithms. Though, I would like to truly ask for more notes about edge cases and why they need to be covered, as for me, I was pretty much doing more of an trial and error method. Also, more worded explanation than in the PBRT book which could be used as references would be very helpful. I have truly put in alot of time, though not been able to successfully pass all the cases in the warptest, due to which my renderings seem to give nans in few cases. 
+
+Exercise writeup
+================
+
+**Part 1: Microfacet BRDF**
+
+<b>Part 1.1 Evaluating Beckmann Distribution</b><br>
+According to the Beckmann distribution formula, Warp::squareToBeckmannPdf function is implemented. The test cases for infinity, or very less values or divide by zero are handled.
+<br><br>
+
+
+<b>Part 1.2 Sampling the Beckmann Distribution</b><br>
+Using the CDF and inverse methods, theta and phi were found. Later, the spherical coordinate system is converted to xyz coordinate system to give the sampling.<br>
+Even though the formula is given upright but the challenges are that a few cases may be missing as the ttest.microfacet tests are not passing. This may be the reason why ajax smooth and rough images may be slightly different than references.<br>
+Distribution and chi test is shown below:<br>
+![Figure [1]: Square to Beckmann Warping](images\stb.png)<br>
+Warptest is run to give the successful test: <br>
+![Figure [2]: Square to Beckmann Warping](images\squareToBeckmann.png)<br>
+![Figure [3]: Chi-square Test for Square to Beckmann Warping](images\squareToBeckmannchitest.png)<br>
+<br>
+
+<b>Part 1.3 Evaluating the Microfacet BRDF</b><br>
+The microfacet understanding was done through the PBRT book. That made sure the formula was applied directly, though the edge cases were not understood completely. A trial and error method was used. Can I ask for help over the same, to pass the 2 tests of the ttest.microfacet where alpha is 80 and above.<br>
+
+<br>
+<b>Part 1.4 Sampling the Microfacet BRDF</b><br>
+Again generarting samples is fairly formula based. I faced challenge in offsetting and rearranging the changed sample range, though with help over the internet I could figure it out.<br>
+
+<br>
+The validation test screenshots are attached underneath:<br>
+![Figure [4]: chi2test-microfacet test](images\chi2test.png)<br>
+![Figure [5]: ttest-microfacet test](images\ttest.png)<br>
+
+<br>
+Using whitted integrator to render rough and smooth ajax:<br>
+
+<div class="twentytwenty-container">
+    <img src="images/ajax-rough.png" alt="Mine">
+    <img src="images/ajaxroughreference.png" alt="Reference">
+</div>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [6]: Whitted-style Ray Tracing for Ajax Rough Scene](images\ajaxroughcode.png)<br>
+
+<div class="twentytwenty-container">
+    <img src="images/ajax-smooth.png" alt="Mine">
+    <img src="images/ajaxsmoothreference.png" alt="Reference">
+</div>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [7]: Whitted-style Ray Tracing for Ajax Smooth Scene](images\ajaxsmoothcode.png)<br>
+
+
+**Part 2: Simple Path Tracer**
+
+<b>Design Choices</b><br>
+This is implemented in a file; path_simple.cpp. An initial recursive approach of the path tracer was taken, though renderings were not following the references. Then, the infinite loop using Russian Roulette was adopted which became easier to understand. The simple path tracer follows the following pseudocode for better understanding and the code is also commented respectively.<br>
+1. alpha = 1, recursive ray is made which is initially the copy of the ray.<br>
+2. while true<br>
+2.1 if recursive ray intersects the scene,<br>
+2.1.1 select a random emitter and sample a point on it and get direction of current intersection to the sampled point<br>
+2.1.2 if direct intersection occurs or if the second last intersected mesh is specular then,<br>
+radiance is radiance + (alpha * radiance at the sampled point)<br>
+2.1.3 if the intersected mesh is diffuse material then,<br>
+make this new ray and if the new ray doesn't hit the scene and new intersected mesh is the same as the current intersected mesh then,<br>
+get bsdf of this sampled point, calculate the geometric term, pdf and radiance from emitter<br>
+if the sampled direction is downwards, radiance will be radiance + (alpha * radiance from emitter * geometric term * bsdf * number of emitter meshes) / pdf<br>
+2.1.4 sample the bsdf<br>
+2.1.5 check if Russian Roulette is less than 0.95<br>
+if yes, then newray becomes the recursive ray and alpha is multiplied into brdf's at each intersected mesh, factored by Russian Roulette.<br>
+if not, then break out of the loop<br>
+if recursive ray doesn't intersect the scene, then break out of the loop<br>
+2.2 sample a new sample for Russian Roulette<br>
+2.3 also check for whether intersected mesh is specular for the next iteration
+<br><br>
+<b>Challenges</b><br>
+The case for when it hits the same mesh again was not considered. This was making the image extremely bright. Also, when number of emitters were not considered in the final radiance, then the image was becoming dull.
+
+<br><br>
+Underneath are the test scenes to be rendered:<br>
+
+<div class="twentytwenty-container">
+    <img src="images/cboxmine.png" alt="Mine">
+    <img src="images/cboxreference.png" alt="Reference">
+</div><br>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [8]: Path-simple Ray Tracing for cbox](images\cboxcode.png)<br>
+
+<div class="twentytwenty-container">
+    <img src="images/veachmine.png" alt="Mine">
+    <img src="images/veachpathsimplereference.png" alt="Reference">
+</div><br>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [9]: Path-simple Ray Tracing for veach_path_simple](images\veachpathsimplecode.png)<br>
+
+<div class="twentytwenty-container">
+    <img src="images/tablemine.png" alt="Mine">
+    <img src="images/tablepathsimplereference.png" alt="Reference">
+</div><br>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [10]: Path-simple Ray Tracing for table_path_simple](images\tablepathsimplecode.png)<br>
+
+
+
+**Part 3: Path tracer with Multiple Importance Sampling**
+
+<b>Design Choices</b><br>
+This is implemented in a file; path.cpp. This also follows the same simple path tracer, though when a diffuse material is hit, along with sampling the emitter a brdf is also sampled and mis_weight is used to tell the contribution of each of these two sampled features. Final radiance at this point will be contributions of both the radiance got from sampled point on light and brdf.
+
+<br><br>
+<b>Challenges</b><br>
+The rendering for veach is not right, as the cases are not being followed. As the renderings for table and cbox are coming right, it has to do with the 2 test cases not being followed.
+
+<br><br>
+Underneath are the test scenes to be rendered:<br>
+<div class="twentytwenty-container">
+    <img src="images/misveachmine.png" alt="Mine">
+    <img src="images/veachreference.png" alt="Reference">
+</div><br>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [11]: MIS Ray Tracing for veach_path_simple](images\veachmiscode.png)<br>
+
+<div class="twentytwenty-container">
+    <img src="images/mistablemine.png" alt="Mine">
+    <img src="images/tablereference.png" alt="Reference">
+</div><br>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [12]: MIS Ray Tracing for table_path_simple](images\tablemiscode.png)<br>
+
+
+Other Details
+================
+
+**Time spent on each task**
+
+*Task 1*<br>
+Understanding what is being expected<br>
+30 hours<br>
+
+*Task 2*<br>
+Microfacet BRDF<br>
+24 hours<br>
+
+*Task 3*<br>
+Simple Path Tracer<br>
+20 hours<br>
+
+*Task 4*<br>
+Path tracer with Multiple Importance Sampling<br>
+15 hours<br>
+
+*Task 5*<br>
+Documentation<br>
+3 hours<br>
+
+
+<!--- 
+  Markdeep & image comparison library - probably no need to change anything below
+-->
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="resources/markdeep.min.js"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="resources/jquery.event.move.js"></script>
+<script src="resources/jquery.twentytwenty.js"></script>
+<link href="resources/offcanvas.css" rel="stylesheet">
+<link href="resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>

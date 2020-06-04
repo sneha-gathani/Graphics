@@ -1,0 +1,108 @@
+**Programming Assignment 4 - Distributed and Whitted-style Ray Tracing**
+
+Feedback
+========
+
+This has been the most toughestt assignment so far. It was not clear on what exactly was expected. More explanation could have worked better in understanding the problem. Also, making own structures was tedious and calling them correctly too. Though, learning in this assignment has been the most.
+
+Exercise writeup
+================
+
+**Part 1 and 2: Area Lights and Distribution Ray Tracing**
+
+<b>Design Choices</b><br>
+1. Area is a class that is the child class of Emitter class and performs the sampling of the position on the triangles on the mesh of the area lights that is the emitter. Firstly, the mesh class is used to get the proportion of the surface area of the triangle to the entire surface area of the mesh. This is used for pdf.<br>
+2. Area class randomly samples the triangle to be sampled from the mesh and then the warping function is used to sample the point on the triangle chosen. The position is further found after interpolating surface normal at sampled position and compute the per-vertex normals or the face normals if the per-vertex normals are not provided by the mesh.<br>
+3. Sampled pdf is inverse of area of the entire emitter mesh.<br>
+4. Whitted integrator is used to first get only the meshes that are emitters and then points are sampled on these meshes where the meshes are randomly chosen. Then area class is used to sample on the emitter, radiance is calculated and using the monte carlo rendering equation, final outgoing radiance to the camera is found to be shaded.
+<br><br>
+<b>Challenges</b><br>
+1. I still don't intuitively understand the barycentric coordinate system and why interpolation is needed.<br>
+<br><br>
+Underneath is the comparison between my rendered image and the given reference image when rendering is done using area lights. <br>
+
+<div class="twentytwenty-container">
+    <img src="images/mottodiffusemine.png" alt="Mine">
+    <img src="images/mottodiffusereference.jpg" alt="Reference">
+</div>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [1]: Area Lights Running](images\mottodiffusecode.png)<br>
+
+**Part 3 and 4: Dielectrics and Whitted-style Ray Tracing**
+
+<b>Design Choices</b><br>
+1. The fresnel term is used to check whether reflection or refraction will occur. Random sampling of reflection or refraction occurs and accordingly, w_o or w_t is calculated. w_o is calulated if reflection occurs else w_t is calculated. Computing w_t makes use of snells law.<br>
+2. <br>
+3. If the mesh is not a diffuse mesh instead sampling happens on the scene itself and dielectric class is used to compute the bsdf of the material. Further, another random sample is used to adjust the radiance to the camera and shade as per the question.
+<br><br>
+<b>Challenges</b><br>
+1. When step-wise snells law is applied, some random image is generated where transparency is seen in the depth but the front face of the scene, that is the text here appears black. What is the reason, could be just the normals, whose intuition is not clear.<br>
+2. If refraction is occuring, first step would be checking the direction of the normal if it is in the hemisphere or outside. The refractive indices of the materials will have to be changed accordingly so that refractive coefficient is not negative.<br>
+<br><br>
+Underneath is the comparison between my rendered image and the given reference image when rendering is done using whitted-style ray tracing. <br>
+
+<div class="twentytwenty-container">
+    <img src="images/mottodielectricmine.png" alt="Mine">
+    <img src="images/mottodielectricreference.jpg" alt="Reference">
+</div><br>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [2]: Whitted-style Ray Tracing for Dielectric Material](images\mottodielectriccode.png)<br>
+
+<div class="twentytwenty-container">
+    <img src="images/cbox.png" alt="Mine">
+    <img src="images/cboxreference.jpg" alt="Reference">
+</div><br>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [3]: Whitted-style Ray Tracing for Cbox](images\cboxcode.png)<br>
+
+
+
+Other Details
+================
+
+**Challenges**
+
+1. For the dielectric material, performing a brute force way of applying the Snell's law for calculating the w_t does not render the right scene. The reason I can think of is the normals and the dot/cross products while using them. Though, that was not understandable. Could you go through the exact functioning of the when to take the dot product and coordinate system in nori, it would really help. I could also schedule an appropriate time as I have faced this with all 3 assignments so far but haven't been able to clarify.<br>
+
+**Time spent on each task**
+
+*Task 1*<br>
+Understanding what is being expected<br>
+15 hours<br>
+
+*Task 2*<br>
+Area Light Source<br>
+12 hours<br>
+
+*Task 3*<br>
+Distribution Ray Tracing<br>
+12 hours<br>
+
+*Task 4*<br>
+Dielectrics<br>
+10 hours<br>
+
+*Task 5*<br>
+Whitted-style Ray Tracing<br>
+5 hours<br>
+
+*Task 6*<br>
+Documentation<br>
+2 hours<br>
+
+
+<!--- 
+  Markdeep & image comparison library - probably no need to change anything below
+-->
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="resources/markdeep.min.js"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="resources/jquery.event.move.js"></script>
+<script src="resources/jquery.twentytwenty.js"></script>
+<link href="resources/offcanvas.css" rel="stylesheet">
+<link href="resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>

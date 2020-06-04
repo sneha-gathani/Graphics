@@ -1,0 +1,147 @@
+**Programming Assignment 3 - Monte Carlo Sampling and Ambient Occlusion**
+
+Feedback
+========
+
+This assignment was very interesting as the sampling techniques that warp uniform transformations. This was important to understand the monte carlo integration and in-turn the rendering equation. Performing the actual derivations for sampling gave clear view of how monte carlo integration works, which uptil now was not understood comfortably. Moreover, the rendering algorithms gave even better understanding of ray tracing as an algorithm.
+
+Exercise writeup
+================
+
+**Part 1: Monte Carlo Sampling**
+
+<b>1.1 Sample Warping</b><br>
+1.1.1 Warp::squareToTent and Warp::squareToTentPdf<br>
+The derivation for sampling from the given distribution by following the given reciepe is attached as an image below:<br>
+![Figure [1]: Square to Tent Warping Derivation](images\squareToTentProof.png)<br>
+![Figure [1]: Square to Tent Warping Derivation](images\squareToTentProof1.png)<br>
+<br><br>
+1.1.2 Warp::squareToUniformDisk and Warp::squareToUniformDiskPdf<br>
+The derivation for sampling from the given distribution by following the given reciepe is attached as an image below:<br>
+![Figure [2]: Square to Uniform Disk Warping Derivation](images\squareToUniformDiskProof.png)<br>
+![Figure [2]: Square to Uniform Disk Warping Derivation](images\squareToUniformDiskProof1.png)<br>
+<br><br>
+1.1.3 Warp::squareToUniformSphere and Warp::squareToUniformSpherePdf<br>
+The derivation for sampling from the given distribution by following the given reciepe is attached as an image below:<br>
+![Figure [3]: Square to Uniform Sphere Warping Derivation](images\squareToUniformSphereProof.png)<br>
+![Figure [3]: Square to Uniform Sphere Warping Derivation](images\squareToUniformSphereProof1.png)<br>
+<br><br>
+1.1.4 Warp::squareToUniformHemisphere and Warp::squareToUniformHemispherePdf<br>
+The derivation for sampling from the given distribution by following the given reciepe is attached as an image below:<br>
+![Figure [4]: Square to Uniform Hemisphere Warping Derivation](images\squareToUniformHemisphereProof.png)<br>
+![Figure [4]: Square to Uniform Hemisphere Warping Derivation](images\squareToUniformHemisphereProof1.png)<br>
+<br><br>
+1.1.5 Warp::squareToCosineHemisphere and Warp::squareToCosineHemispherePdf<br>
+The derivation for sampling from the given distribution by following the given reciepe is attached as an image below:<br>
+![Figure [5]: Square to Cosine Hemisphere Warping Derivation](images\squareToCosineHemisphereProof.png)<br>
+![Figure [5]: Square to Cosine Hemisphere Warping Derivation](images\squareToCosineHemisphereProof1.png)<br>
+
+
+<br><br><br>
+<b>1.2 Validation</b><br>
+1.2.1 Warp::squareToTent and Warp::squareToTentPdf<br>
+Warped Sampling and Warp Test result screenshots are attached as an image below:<br>
+![Figure [6]: Square to Tent Warping](images\squareToTent.png)<br>
+![Figure [7]: Chi-square Test for Square to Tent Warping](images\chisquareToTent.png)<br>
+<br><br>
+1.2.2 Warp::squareToUniformDisk and Warp::squareToUniformDiskPdf<br>
+Warped Sampling and Warp Test result screenshots are attached as an image below:<br>
+![Figure [8]: Square to Uniform Disk Warping](images\squareToUniformDisk.png)<br>
+![Figure [9]: Chi-square Test for Square to Uniform Disk Warping](images\chisquareToUniformDisk.png)<br>
+<br><br>
+1.2.3 Warp::squareToUniformSphere and Warp::squareToUniformSpherePdf<br>
+Warped Sampling and Warp Test result screenshots are attached as an image below:<br>
+![Figure [10]: Square to Uniform Sphere Warping](images\squareToUniformSphere.png)<br>
+![Figure [11]: Chi-square Test for Square to Uniform Sphere Warping](images\chisquareToUniformSphere.png)<br>
+<br><br>
+1.2.4 Warp::squareToUniformHemisphere and Warp::squareToUniformHemispherePdf<br>
+Warped Sampling and Warp Test result screenshots are attached as an image below:<br>
+![Figure [12]: Square to Uniform Hemisphere Warping](images\squareToUniformHemisphere.png)<br>
+![Figure [13]: Chi-square Test for Square to Uniform Hemisphere Warping](images\chisquareToUniformHemisphere.png)<br>
+<br><br>
+1.2.5 Warp::squareToCosineHemisphere and Warp::squareToCosineHemispherePdf<br>
+Warped Sampling and Warp Test result screenshots are attached as an image below:<br>
+![Figure [14]: Square to Cosine Hemisphere Warping](images\squareToCosineHemisphere.png)<br>
+![Figure [15]: Chi-square Test for Square to Cosine Hemisphere Warping](images\chisquareToCosineHemisphere.png)<br>
+
+
+
+
+<br><br><br><br><br>
+**Part 2: Rendering Algorithms**
+
+<b>2.1 Ambient Occlusion</b><br>
+Underneath is the comparison between my rendered image and the given reference image when rendering is done using point lights. <br>
+
+<div class="twentytwenty-container">
+    <img src="images/AmbientOcclusion.png" alt="Mine">
+    <img src="images/AmbientOcclusionSample.png" alt="Reference">
+</div>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [16]: Ambient Occlusion Rendering Running](images\AOCode.png)<br>
+
+<br>
+<br>
+<b>2.2 Point Lights</b><br>
+Underneath is the comparison between my rendered image and the given reference image when rendering is done using point lights. <br>
+
+<div class="twentytwenty-container">
+    <img src="images/Point.png" alt="Mine">
+    <img src="images/PointSample.png" alt="Reference">
+</div>
+
+<br>Code running screenshot is also attached beneath:<br>
+![Figure [16]: Point Rendering Running](images\PointCode.png)<br>
+
+
+
+Other Details
+================
+
+**Encountered problems**
+
+
+**Time spent on each task**
+
+*Task 1*<br>
+Understanding and Revising Monte Carlo Intergration, Inversion Method for sampling from PDF<br>
+5 hours<br>
+
+*Task 2*<br>
+Sqaure to Tent Warping<br>
+8 hours<br>
+
+*Task 3*<br>
+Square to Uniform Disk Warping and Square to Uniform Sphere Warping<br>
+2 hours<br>
+
+*Task 4*<br>
+Square to Uniform Hemisphere Warping and Square to Cosine Hemisphere Warping<br>
+4 hours<br>
+
+*Task 5*<br>
+Point Light Source Rendering<br>
+4 hours
+
+*Task 6*<br>
+Ambient Occlusion Rendering<br>
+4 hours<br>
+
+*Task 7*<br>
+Documentation<br>
+3 hours<br>
+
+
+<!--- 
+  Markdeep & image comparison library - probably no need to change anything below
+-->
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="resources/markdeep.min.js"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="resources/jquery.event.move.js"></script>
+<script src="resources/jquery.twentytwenty.js"></script>
+<link href="resources/offcanvas.css" rel="stylesheet">
+<link href="resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>

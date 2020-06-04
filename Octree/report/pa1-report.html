@@ -1,0 +1,180 @@
+**Programming Assignment 2 - Ray Tracing Acceleration Data Structures**
+
+Feedback
+========
+
+This assignment very well helped to understand the underlying structure of NORI; the ray-tracer. But, it was confusing, especially the flow of the calls as to render using my functions.
+Moreover, it was very interesting to see how simple structure like Octree can reduce the rendering time by atleast a speedup factor of 22 times. Even though the construction of the tree and its traversal as well as the rendering was conceptually easy to understand, but coding took alot of time and it was confusing for me.
+The ultimate challenge was to debug the code.
+
+Exercise writeup
+================
+
+**Part 1: Octree Construction**
+
+1.1 What information do you store per octree node?<br>
+  - Bounding box of the group of triangles<br>
+  - List of triangles that belong to this bounding box<br>
+  - Pointers to 8 children nodes<br><br>
+1.2 How many bytes of memory does one of your octree nodes occupy?<br>
+  - 112 bytes<br><br>
+1.3 Statistics for the Ajax scene:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Python linenumbers
+Loading "../scenes/pa2/ajax.obj" .. done. (V=409676, F=544566, took 2.6s and 18.7 MiB)
+Building mesh ...
+Memory Requirement: 112bytes
+Built mesh ...
+Time for making octree: 1seconds.
+Octree made successfully ...
+Number of leaf nodes in the octree are: 6245
+Number of interior nodes in the octree are: 7635
+Average number of triangles in leaf nodes of the octree are: 491
+
+Configuration: Scene[
+  integrator = NormalIntegrator[],
+  sampler = Independent[sampleCount=32]
+  camera = PerspectiveCamera[
+    cameraToWorld = [  -0.5356,    0.2999,    0.7894,    -65.61;
+                     1.353e-05,    0.9348,   -0.3551,     47.58;
+                       -0.8445,   -0.1902,   -0.5007,     24.36;
+                             0,         0,         0,         1],
+    outputSize = [768, 768],
+    fov = 30.000000,
+    clip = [0.000100, 10000.000000],
+    rfilter = GaussianFilter[radius=2.000000, stddev=0.500000]
+  ],
+  meshes = {
+    Mesh[
+      name = "../scenes/pa2/ajax.obj",
+      vertexCount = 409676,
+      triangleCount = 544566,
+      bsdf = Diffuse[
+        albedo = [0.500000, 0.500000, 0.500000]
+      ],
+      emitter = null
+    ]
+  }
+]
+
+Rendering .. done. (took 18.0s)
+Writing a 768x768 OpenEXR file to "../scenes/pa2/ajax-normals"
+Writing a 768x768 PNG file to "../scenes/pa2/ajax-normals"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<br>The statistics were: <br>
+  - Sample Count = 32<br>
+  - Resoultion = 768 x 768<br>
+  - Total number of vertices = 409676<br>
+  - Total number of triangles = 544566<br>
+
+Underneath is the screenshot too.<br>
+![Figure [1]: Statistics of Ajax Scene](images\StatisticsAjaxScene.png)
+
+1.4 Construction time<br>
+  - The time taken for octree construction is 1 second as seen in the picture above.<br><br>
+1.5 Number of interior nodes<br>
+  - The number of interior nodes are: 7635<br><br>
+1.6 Number of leaf nodes<br>
+  - The number of leaf nodes are: 6245<br><br>
+1.7 Average number of triangles per leaf node<br>
+  - Average number of triangles per leaf node are: 491<br>
+
+
+**Part 2: Ray Traversal**
+
+2.1 How long did it take to render the scene on your machine?<br>
+  - It takes 56.8 seconds for rendering it on the machine.<br><br>
+  ![Figure [2]: Screenshot of traversal code running](images\onlytraversal.png)
+2.2 How much of a speed-up did you achieve over what was there before? You may need to reduce both resolution and number of samples per pixel of the scene and extrapolate to obtain an estimate of the time required by the brute force algorithm (this is based on the reasonable assumption that the rendering time is proportional to the product of the number of pixels and samples per pixel.)<br>
+  - The original brute force method for the same scene, with resolution of 192 x 192 (that is 1/4th times of original width and 1/4th times of original height) and samples per pixel also reduced to 1/4th gives a rendering time of 14.8 minutes.<br>
+  Augmenting this to our original case; would mean something like a render time of; 14.8*64 = 947.2 minutes.
+  But speed-up in this case, would mean:<br>
+  (947.2 * 60) sec / 56.8 sec = 1000.56
+  <br> As, a side note, i found this very dramatic, so i ran the brute force with actual statistics of the scene.<br> This rendered the image in 21 minutes. This gives approximate speed-up as: 1260 sec / 56.8 sec = 22.18.
+
+  ![Figure [3]: Screenshot of brute force code running](images\bf.png)
+
+**Part 3: Improved Ray Traversal**
+
+3.1 Include the surface normal visualization of the Ajax bust rendered by your implementation.<br>
+  - The surface normal visualization is given below:<br>
+![Figure [4]: Image rendered using faster traversal through Octree](images\fastertraversalimage.png)
+
+3.2 How long did it take to render the scene on your machine with this improved version?<br>
+  - 18.6 seconds. The faster version reduces the time taken from 56.8 seconds to 18.6 seconds.<br><br>
+  ![Figure [5]: Screenshot of Improved Ray Traversal Code running](images\fastertraversal.png)
+3.3 How much of a speedup is this relative to Part 2?<br>
+  - Speedup = Speed(Octree Rendering)/Speed(Faster Octree Rendering) = 56.8 sec / 18.6 sec = 3.053
+
+Rendering Generated
+================
+**Part 2: Rendering for only Traversal through Octree**
+Underneath is the rendered image:<br>
+![Figure [6]: Statistics of Ajax Scene](images\traversal.png)
+
+Screenshot of running program:<br>
+![Figure [7]: Only Traversal Program Running](images\onlytraversal.png)<br><br>
+
+**Part 3: Rendering for Faster Traversal through Octree**
+Underneath is the rendered image:<br>
+![Figure [8]: Statistics of Ajax Scene](images\fastertraversalimage.png)
+
+Screenshot of running program:<br>
+![Figure [9]: Faster Traversal Program Running](images\fastertraversal.png)
+
+
+Other Details
+================
+
+**Encountered problems**
+
+- The Part 2 traversal function gives a weird image. Although, the sorted faster traversal gives the perfect image.<br>
+The only conclusion that I can boil down to and understand is that there is some way, where traingles are not getting shaded once shaded before.<br> Though, my algorithm for traversal is right, and moreover, the same algorithm for the faster traversal renders the perfect image.<br>
+This all the more suggests me that it could also mean that overlapping of shading of triangles is happening.
+
+- Could not solve this problem, even after another method of traversal where, nodes are given a true bool value for being a leaf node. This too, renders the same image.
+
+**List of external libraries**
+
+Tried using the OpenMP Library but not able to add it to the CMakeLists.txt file for itt tto be used in the program.
+
+**Time you spent on each task**
+
+*Task 1*<br>
+Understanding Nori Source Code and Basic Functionality<br>
+10 hours<br>
+
+*Task 2*<br>
+Octree Construction<br>
+12 hours<br>
+
+*Task 3*<br>
+Ray Traversal<br>
+10 hours<br>
+
+*Task 4*<br>
+Fast Ray Traversal<br>
+1 hour<br>
+
+*Task 5*<br>
+Multithreading<br>
+2 hours, but unsuccessful<br>
+Could not figure out how to include OpenMP in CMakeLists.txt file. Code for the same (that is Part 4; bonus) is included, though is does't improve any performance, meaning no multithreading or parallelization is happening, thus OpenMP not found. Also, tried using tbd::parallel_for.
+
+*Task 6*<br>
+Documentation<br>
+3 hours<br>
+
+<!--- 
+  Markdeep & image comparison library - probably no need to change anything below
+-->
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="resources/markdeep.min.js"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="resources/jquery.event.move.js"></script>
+<script src="resources/jquery.twentytwenty.js"></script>
+<link href="resources/offcanvas.css" rel="stylesheet">
+<link href="resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>
+
